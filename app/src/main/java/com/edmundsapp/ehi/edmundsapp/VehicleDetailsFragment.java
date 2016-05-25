@@ -47,17 +47,7 @@ public class VehicleDetailsFragment extends Fragment{
     @Override
     public void onActivityCreated(Bundle state){
         super.onActivityCreated(state);
-        //ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, models);
-        //setListAdapter(ad);
     }
-
-   /* @Override
-    public void onListItemClick(ListView lv, View v, int pos, long id){
-        v.setSelected(true);
-        selected = (String) lv.getItemAtPosition(pos);
-        new GetDetails().execute(CarSearch.yr.selected, CarSearch.mk.selected, selected);
-    }*/
-
 
     public void setName(String m){
         TextView t = (TextView)getView().findViewById(R.id.mdlnm);
@@ -81,7 +71,7 @@ public class VehicleDetailsFragment extends Fragment{
                 c.setRequestProperty("Accept", "application/json");
 
                 if(c.getResponseCode() != 200){
-                    throw new RuntimeException("HTTP failed with error: " + c.getResponseCode());
+                    throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() +" Request: " + url.toString());
                 }
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));

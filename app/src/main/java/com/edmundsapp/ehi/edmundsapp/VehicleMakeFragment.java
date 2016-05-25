@@ -22,6 +22,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -32,13 +35,13 @@ public class VehicleMakeFragment extends ListFragment{
 
     ListView lv;
     ArrayAdapter<String> ad;
-    String[] makes = {"none"};
+    String[] makes = {"Loading"};
     String selected;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.select_vehicle_make_fragment, container, false);
+        View v = inflater.inflate(R.layout.option_select_fragment, container, false);
         return v;
     }
 
@@ -51,14 +54,24 @@ public class VehicleMakeFragment extends ListFragment{
 
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
+
+        CarSearch.hideFrag("dt");
+        CarSearch.hideFrag("st");
+        CarSearch.hideFrag("md");
+
         v.setSelected(true);
         selected = (String) lv.getItemAtPosition(pos);
-        new GetModels().execute(CarSearch.yr.selected, selected);
-        CarSearch.showFrag("md");
+
+        if(!selected.equals("None")) {
+            new GetModels().execute(CarSearch.yr.selected, selected);
+            CarSearch.showFrag("md");
+        }
     }
 
     public void setList(String m){
-        ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, m.split(","));
+        List<String> l = new ArrayList<String>(Arrays.asList(m.split(", ")));
+        l.removeAll(Arrays.asList(""," ", null));
+        ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, l);
         setListAdapter(ad);
     }
 
@@ -75,7 +88,7 @@ public class VehicleMakeFragment extends ListFragment{
                 c.setRequestProperty("Accept", "application/json");
 
                 if(c.getResponseCode() != 200){
-                    throw new RuntimeException("HTTP failed with error: " + c.getResponseCode());
+                    throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() +" Request: " + url.toString());
                 }
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));

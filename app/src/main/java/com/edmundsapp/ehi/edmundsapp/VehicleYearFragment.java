@@ -38,7 +38,7 @@ public class VehicleYearFragment extends ListFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.select_vehicle_make_fragment, container, false);
+        return inflater.inflate(R.layout.option_select_fragment, container, false);
     }
 
     @Override
@@ -51,6 +51,11 @@ public class VehicleYearFragment extends ListFragment{
 
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
+        CarSearch.hideFrag("mk");
+        CarSearch.hideFrag("st");
+        CarSearch.hideFrag("dt");
+        CarSearch.hideFrag("md");
+
         v.setSelected(true);
         selected = (String)lv.getItemAtPosition(pos);
         new GetMakes().execute(selected);
@@ -68,7 +73,7 @@ public class VehicleYearFragment extends ListFragment{
                 c.setRequestProperty("Accept", "application/json");
 
                 if(c.getResponseCode() != 200){
-                    throw new RuntimeException("HTTP failed with error: " + c.getResponseCode());
+                    throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() +" Request: " + url.toString());
                 }
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
@@ -100,7 +105,11 @@ public class VehicleYearFragment extends ListFragment{
                     makes+=", ";
                 }
 
-                CarSearch.mk.setList(makes);
+                if(!makes.isEmpty()) {
+                    CarSearch.mk.setList(makes);
+                }else{
+                    CarSearch.mk.setList("None");
+                }
 
             }catch(JSONException e){
 

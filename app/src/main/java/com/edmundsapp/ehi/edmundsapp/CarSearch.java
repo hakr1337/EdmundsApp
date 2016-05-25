@@ -58,6 +58,28 @@ public class CarSearch extends FragmentActivity {
         }
     }
 
+    public static void hideFrag(String frag){
+        ft = fm.beginTransaction();
+        switch(frag){
+            case "mk":
+                ft.hide(mk);
+                ft.commit();
+                break;
+            case "md":
+                ft.hide(md);
+                ft.commit();
+                break;
+            case "st":
+                ft.hide(st);
+                ft.commit();
+                break;
+            case "dt":
+                ft.hide(dt);
+                ft.commit();
+                break;
+        }
+    }
+
 }
 
 
