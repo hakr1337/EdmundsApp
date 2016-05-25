@@ -102,7 +102,7 @@ public class VehicleYearFragment extends ListFragment{
                 String makes = "";
                 for(int i = 0; i<a.length(); i++){
                     makes += a.getJSONObject(i).getString("name");
-                    makes+=", ";
+                    makes+="^";
                 }
 
                 if(!makes.isEmpty()) {

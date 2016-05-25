@@ -57,13 +57,15 @@ public class VehicleStyleFragment extends ListFragment{
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
-        String[] t = ids.split(", ");
+        selected = (String) lv.getItemAtPosition(pos);
+        List<String> t = new ArrayList<String>(Arrays.asList(ids.split("\\^")));
+        t.removeAll(Arrays.asList("", " ", null));
         CarSearch.showFrag("dt");
-        new GetTrims().execute(t[pos]);
+        new GetTrims().execute(t.get(pos));
     }
 
     public void setList(String m){
-        List<String> l = new ArrayList<String>(Arrays.asList(m.split(", ")));
+        List<String> l = new ArrayList<String>(Arrays.asList(m.split("\\^")));
         l.removeAll(Arrays.asList(""," ", null));
         ad = new ArrayAdapter<String>(getActivity(), R.layout.style_list, R.id.style_row, l);
         setListAdapter(ad);
@@ -113,14 +115,15 @@ public class VehicleStyleFragment extends ListFragment{
         protected void onPostExecute(String ret){
             if(ret.equals("UNK")) {
                 CarSearch.dt.setName("Car details unavailable.");
+                CarSearch.dt.setPrice("MSRP:\n Unknown");
             }else {
                 try {
                     JSONObject json = new JSONObject(ret);
 
                     String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("baseMSRP");
 
-                    CarSearch.dt.setName("hello");
-                    CarSearch.dt.setPrice(price);
+                    CarSearch.dt.setName("Vehicle Selected:\n"+CarSearch.yr.selected +" "+CarSearch.mk.selected+" "+CarSearch.md.selected+" " + CarSearch.st.selected);
+                    CarSearch.dt.setPrice("MSRP:\n $" + price);
 
                 } catch (JSONException e) {
 

@@ -69,7 +69,7 @@ public class VehicleMakeFragment extends ListFragment{
     }
 
     public void setList(String m){
-        List<String> l = new ArrayList<String>(Arrays.asList(m.split(", ")));
+        List<String> l = new ArrayList<String>(Arrays.asList(m.split("\\^")));
         l.removeAll(Arrays.asList(""," ", null));
         ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, l);
         setListAdapter(ad);

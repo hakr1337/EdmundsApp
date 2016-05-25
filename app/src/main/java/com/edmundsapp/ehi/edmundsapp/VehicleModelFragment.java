@@ -112,10 +112,10 @@ public class VehicleModelFragment extends ListFragment{
 
                 for(int i = 0; i<a.length(); i++){
                     models += a.getJSONObject(i).getString("name");
-                    models+=", ";
+                    models+="^";
 
                     ids += ""+a.getJSONObject(i).getInt("id");
-                    ids += ", ";
+                    ids += "^";
 
                 }
 
