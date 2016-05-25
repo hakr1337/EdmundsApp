@@ -44,8 +44,8 @@
         android:layout_height="150dp"
         android:layout_weight="1"
         android:id = "@+id/vhdt"
-        android:background="#505050"
-        ></RelativeLayout>
+        >
+        </RelativeLayout>
 
 
 </LinearLayout>

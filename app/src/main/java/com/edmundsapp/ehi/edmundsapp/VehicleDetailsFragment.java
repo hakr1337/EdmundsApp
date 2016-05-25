@@ -4,6 +4,7 @@ package com.edmundsapp.ehi.edmundsapp;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +30,7 @@ import java.net.URL;
  * Created by James on 5/24/2016.
  */
 
-public class VehicleDetailsFragment extends ListFragment{
+public class VehicleDetailsFragment extends Fragment{
 
     ListView lv;
     ArrayAdapter<String> ad;
@@ -38,27 +40,32 @@ public class VehicleDetailsFragment extends ListFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.select_vehicle_model_fragment, container, false);
+        View v = inflater.inflate(R.layout.display_vehicle_details_fragment, container, false);
         return v;
     }
 
     @Override
     public void onActivityCreated(Bundle state){
         super.onActivityCreated(state);
-        ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, models);
-        setListAdapter(ad);
+        //ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, models);
+        //setListAdapter(ad);
     }
 
-    @Override
+   /* @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
         selected = (String) lv.getItemAtPosition(pos);
         new GetDetails().execute(CarSearch.yr.selected, CarSearch.mk.selected, selected);
-    }
+    }*/
 
-    public void setList(String m){
-        ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, m.split(","));
-        setListAdapter(ad);
+
+    public void setName(String m){
+        TextView t = (TextView)getView().findViewById(R.id.mdlnm);
+        t.setText(m);
+    }
+    public void setPrice(String m){
+        TextView t = (TextView)getView().findViewById(R.id.mdlpc);
+        t.setText(m);
     }
 
 

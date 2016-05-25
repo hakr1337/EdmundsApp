@@ -52,9 +52,9 @@ public class VehicleYearFragment extends ListFragment{
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
-        CarSearch.yr.
         selected = (String)lv.getItemAtPosition(pos);
         new GetMakes().execute(selected);
+        CarSearch.showFrag("mk");
     }
 
     private class GetMakes extends AsyncTask<String, Void, String> {

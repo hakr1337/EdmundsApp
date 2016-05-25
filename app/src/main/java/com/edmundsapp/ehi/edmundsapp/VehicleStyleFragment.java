@@ -28,33 +28,34 @@ import java.net.URL;
  * Created by James on 5/24/2016.
  */
 
-public class VehicleMakeFragment extends ListFragment{
+public class VehicleStyleFragment extends ListFragment{
 
     ListView lv;
     ArrayAdapter<String> ad;
-    String[] makes = {"none"};
+    String[] models = {"none"};
     String selected;
+    String ids;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.select_vehicle_make_fragment, container, false);
+        View v = inflater.inflate(R.layout.select_vehicle_style_fragment, container, false);
         return v;
     }
 
     @Override
     public void onActivityCreated(Bundle state){
         super.onActivityCreated(state);
-        ad = new ArrayAdapter<String>(getActivity(), R.layout.list_row, R.id.row_item, makes);
+        ad = new ArrayAdapter<String>(getActivity(), R.layout.style_list, R.id.style_row, models);
         setListAdapter(ad);
     }
 
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
-        selected = (String) lv.getItemAtPosition(pos);
-        new GetModels().execute(CarSearch.yr.selected, selected);
-        CarSearch.showFrag("md");
+        String[] t = ids.split(", ");
+        CarSearch.showFrag("dt");
+        new GetTrims().execute(t[pos]);
     }
 
     public void setList(String m){
@@ -62,14 +63,17 @@ public class VehicleMakeFragment extends ListFragment{
         setListAdapter(ad);
     }
 
+    public void setIds(String i){
+        ids = i;
+    }
 
 
-    private class GetModels extends AsyncTask<String, Void, String> {
+    private class GetTrims extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
             try {
-                URL url = new URL("http://api.edmunds.com/api/vehicle/v2/"+params[1].replaceAll("\\s+", "")+"?fmt=json&year=" + params[0] + "&api_key=jskft3jqdm9wrhvj3fba2qwg");
+                URL url = new URL("http://api.edmunds.com/v1/api/tmv/tmvservice/calculatenewtmv?styleid="+params[0]+"&zip=84124&fmt=json&api_key=jskft3jqdm9wrhvj3fba2qwg");
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();
                 c.setRequestMethod("GET");
                 c.setRequestProperty("Accept", "application/json");
@@ -100,14 +104,10 @@ public class VehicleMakeFragment extends ListFragment{
             try {
                 JSONObject json = new JSONObject(ret);
 
-                JSONArray a = json.getJSONArray("models");
-                String models = "";
-                for(int i = 0; i<a.length(); i++){
-                    models += a.getJSONObject(i).getString("name");
-                    models+=", ";
-                }
+                String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("baseMSRP");
 
-                CarSearch.md.setList(models);
+                CarSearch.dt.setName("hello");
+                CarSearch.dt.setPrice(price);
 
             }catch(JSONException e){
 

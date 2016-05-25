@@ -52,10 +52,9 @@ public class VehicleModelFragment extends ListFragment{
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
-
         selected = (String) lv.getItemAtPosition(pos);
         new GetTrims().execute(CarSearch.yr.selected, CarSearch.mk.selected, selected);
-
+        CarSearch.showFrag("st");
     }
 
     public void setList(String m){
@@ -103,12 +102,19 @@ public class VehicleModelFragment extends ListFragment{
 
                 JSONArray a = json.getJSONArray("styles");
                 String models = "";
+                String ids = "";
+
                 for(int i = 0; i<a.length(); i++){
                     models += a.getJSONObject(i).getString("name");
                     models+=", ";
+
+                    ids += ""+a.getJSONObject(i).getInt("id");
+                    ids += ", ";
+
                 }
 
-                CarSearch.md.setList(models);
+                CarSearch.st.setList(models);
+                CarSearch.st.setIds(ids);
 
             }catch(JSONException e){
 
