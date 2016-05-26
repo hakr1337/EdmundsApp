@@ -1,3 +1,4 @@
+
 package com.edmundsapp.ehi.edmundsapp;
 
 import android.support.v4.app.FragmentActivity;
@@ -81,5 +82,4 @@ public class CarSearch extends FragmentActivity {
     }
 
 }
-
 

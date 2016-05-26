@@ -1,6 +1,5 @@
 package com.edmundsapp.ehi.edmundsapp;
 
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,44 +24,48 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-/**
- * Created by James on 5/24/2016.
+/***
+ * Fragment class for handling vehicle style selection
+ *  Extends a ListFragment for easy override of list functions on click
+ *  Also allows for dynamic updating of list when needed
+ *  Author: James Bradshaw
+ *  Date: 5/24/16
  */
-
 public class VehicleStyleFragment extends ListFragment{
 
     ListView lv;
     ArrayAdapter<String> ad;
-    String[] models = {"Loading"};
-    String selected;
-    String ids;
+
+    String[] styles = {"Loading"};//initial styles array
+    String selected; //style selected
+    String ids; //style ids
 
     @Nullable
-    @Override
+    @Override //Inflate option_select_fragment when view is created
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.option_select_fragment
-                , container, false);
-        return v;
+        return inflater.inflate(R.layout.option_select_fragment, container, false);
     }
 
-    @Override
+    @Override //create list from styles array when activity created
     public void onActivityCreated(Bundle state){
         super.onActivityCreated(state);
-        ad = new ArrayAdapter<String>(getActivity(), R.layout.style_list, R.id.style_row, models);
+        ad = new ArrayAdapter<String>(getActivity(), R.layout.style_list, R.id.style_row, styles);
         setListAdapter(ad);
     }
 
-    @Override
+    @Override //handle click of an item on list
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
-        selected = (String) lv.getItemAtPosition(pos);
+        selected = (String) lv.getItemAtPosition(pos); //set selected item for later use
+
+        //split ids for access to the one needed also turn into array list for removing bad data
         List<String> t = new ArrayList<String>(Arrays.asList(ids.split("\\^")));
-        t.removeAll(Arrays.asList("", " ", null));
-        CarSearch.showFrag("dt");
-        new GetTrims().execute(t.get(pos));
+        t.removeAll(Arrays.asList("", " ", null));//remove bad data
+        CarSearch.showFrag("dt");//unhide details frag
+        new GetDetails().execute(t.get(pos));//call for async detail collection using style id
     }
 
+    //sets list of styles when new model selected
     public void setList(String m){
         List<String> l = new ArrayList<String>(Arrays.asList(m.split("\\^")));
         l.removeAll(Arrays.asList(""," ", null));
@@ -71,29 +73,39 @@ public class VehicleStyleFragment extends ListFragment{
         setListAdapter(ad);
     }
 
+    //set ids string
     public void setIds(String i){
         ids = i;
     }
 
-
-    private class GetTrims extends AsyncTask<String, Void, String> {
+    /**
+     * GetDetails calls the edmunds.com API using the Java net package
+     * handles responses depending on HTTP codes then if all is well
+     * uses a buffered reader to read in the returned data into a string
+     * to pass on to the onPostExecute method which parses the data using
+     * the json library to get the correct data and display it. This class
+     * extends the AsyncTask class to avoid freezing up the UI
+     */
+    private class GetDetails extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            try {
+            try {//attempt to connect to the API through the total market value service to find the MSRP
                 URL url = new URL("http://api.edmunds.com/v1/api/tmv/tmvservice/calculatenewtmv?styleid="+params[0]+"&zip=84124&fmt=json&api_key=jskft3jqdm9wrhvj3fba2qwg");
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();
                 c.setRequestMethod("GET");
                 c.setRequestProperty("Accept", "application/json");
 
+                //if HTTP response is not returned as OK(code 200)
                 if(c.getResponseCode() != 200){
+                    //if current year selected is '17
                     if(CarSearch.yr.selected.equals("2017") && c.getResponseCode() == 400){
-                        return "UNK";
-                    }else {
+                        return "UNK";//vehicle info not released yet
+                    }else {//if not current year bad request throw error
                         throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() + " Request: " + url.toString());
                     }
                 }
-
+                //read input stream
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
 
                 String response;
@@ -102,31 +114,30 @@ public class VehicleStyleFragment extends ListFragment{
                     ret += response + " ";
                 }
                 return ret;
-            }catch(MalformedURLException e){
+            }catch(MalformedURLException e){//handle exceptions and print appropriate messages
                 Log.v("TAG", "malformed URL exception");
             }catch(IOException e){
                 Log.v("TAG", "IO exception");
             }
-
             return "none";
         }
 
-        @Override
+        @Override //after execution finished parse returned JSON in post execute
         protected void onPostExecute(String ret){
-            if(ret.equals("UNK")) {
+            if(ret.equals("UNK")) {//if info unknown display
                 CarSearch.dt.setName("Car details unavailable.");
                 CarSearch.dt.setPrice("MSRP:\n Unknown");
             }else {
                 try {
-                    JSONObject json = new JSONObject(ret);
+                    JSONObject json = new JSONObject(ret);//create json object for reading
 
-                    String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("baseMSRP");
+                    String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("baseMSRP");//retrieve MSRP from object
 
-                    CarSearch.dt.setName("Vehicle Selected:\n"+CarSearch.yr.selected +" "+CarSearch.mk.selected+" "+CarSearch.md.selected+" " + CarSearch.st.selected);
-                    CarSearch.dt.setPrice("MSRP:\n $" + price);
+                    CarSearch.dt.setName("Vehicle Selected:\n"+CarSearch.yr.selected +" "+CarSearch.mk.selected+" "+CarSearch.md.selected+" " + CarSearch.st.selected);//display selected vehicles name
+                    CarSearch.dt.setPrice("MSRP:\n $" + price);//display MSRP
 
                 } catch (JSONException e) {
-
+                    e.printStackTrace();
                 }
             }
         }

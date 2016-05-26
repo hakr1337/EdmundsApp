@@ -28,10 +28,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-/**
- * Created by James on 5/24/2016.
+/***
+ * Fragment class for displaying vehicle details with previous selections
+ *  Allows for dynamic updating of Name and Price TextViews
+ *  Author: James Bradshaw
+ *  Date: 5/24/16
  */
-
 public class VehicleDetailsFragment extends Fragment{
 
     ListView lv;
@@ -40,21 +42,21 @@ public class VehicleDetailsFragment extends Fragment{
     String selected;
 
     @Nullable
-    @Override
+    @Override//inflate layout
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.display_vehicle_details_fragment, container, false);
-        return v;
+        return inflater.inflate(R.layout.display_vehicle_details_fragment, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle state){
         super.onActivityCreated(state);
     }
-
+    //set name text
     public void setName(String m){
         TextView t = (TextView)getView().findViewById(R.id.mdlnm);
         t.setText(m);
     }
+    //set price text
     public void setPrice(String m){
         TextView t = (TextView)getView().findViewById(R.id.mdlpc);
         t.setText(m);

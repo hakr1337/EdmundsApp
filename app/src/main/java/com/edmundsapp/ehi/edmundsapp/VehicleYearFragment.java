@@ -23,9 +23,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
-/**
- * Created by James on 5/24/2016.
+/***
+ * Fragment class for handling vehicle year selection
+ *  Extends a ListFragment for easy override of list functions on click
+ *  Also allows for dynamic updating of list when needed
+ *  Author: James Bradshaw
+ *  Date: 5/24/16
  */
 
 public class VehicleYearFragment extends ListFragment{
@@ -36,12 +39,12 @@ public class VehicleYearFragment extends ListFragment{
     String selected;
 
     @Nullable
-    @Override
+    @Override//inflate layout
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.option_select_fragment, container, false);
     }
 
-    @Override
+    @Override//populate list with years string in resources
     public void onActivityCreated(Bundle state){
         super.onActivityCreated(state);
         years  = getResources().getStringArray(R.array.years);
@@ -51,6 +54,7 @@ public class VehicleYearFragment extends ListFragment{
 
     @Override
     public void onListItemClick(ListView lv, View v, int pos, long id){
+        //hide all lower frags on click to avoid errors
         CarSearch.hideFrag("mk");
         CarSearch.hideFrag("st");
         CarSearch.hideFrag("dt");
@@ -62,20 +66,30 @@ public class VehicleYearFragment extends ListFragment{
         CarSearch.showFrag("mk");
     }
 
+    /**
+     * GetMakes calls the edmunds.com API using the Java net package
+     * handles responses depending on HTTP codes then if all is well
+     * uses a buffered reader to read in the returned data into a string
+     * to pass on to the onPostExecute method which parses the data using
+     * the json library to get the correct data and display it. This class
+     * extends the AsyncTask class to avoid freezing up the UI
+     */
+
     private class GetMakes extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            try {
+            try {//create API url using year to find makes in that year
                 URL url = new URL("http://api.edmunds.com/api/vehicle/v2/makes?fmt=json&year=" + params[0] + "&api_key=jskft3jqdm9wrhvj3fba2qwg");
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();
                 c.setRequestMethod("GET");
                 c.setRequestProperty("Accept", "application/json");
 
-                if(c.getResponseCode() != 200){
+                if(c.getResponseCode() != 200){//handle failure
                     throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() +" Request: " + url.toString());
                 }
 
+                //buffered reader to read stream
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
 
                 String response;
@@ -96,23 +110,23 @@ public class VehicleYearFragment extends ListFragment{
         @Override
         protected void onPostExecute(String ret){
             try {
-                JSONObject json = new JSONObject(ret);
+                JSONObject json = new JSONObject(ret);//create json object with data
 
-                JSONArray a = json.getJSONArray("makes");
+                JSONArray a = json.getJSONArray("makes");//retrieve makes array
                 String makes = "";
                 for(int i = 0; i<a.length(); i++){
-                    makes += a.getJSONObject(i).getString("name");
+                    makes += a.getJSONObject(i).getString("name");//get names of makes
                     makes+="^";
                 }
 
-                if(!makes.isEmpty()) {
+                if(!makes.isEmpty()) {//handle if year doesnt have makes
                     CarSearch.mk.setList(makes);
                 }else{
                     CarSearch.mk.setList("None");
                 }
 
             }catch(JSONException e){
-
+                e.printStackTrace();
             }
         }
     }
