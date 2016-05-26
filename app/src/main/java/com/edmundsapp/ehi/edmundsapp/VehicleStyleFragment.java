@@ -1,9 +1,18 @@
 package com.edmundsapp.ehi.edmundsapp;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +32,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.jar.Manifest;
 
 /***
  * Fragment class for handling vehicle style selection
@@ -53,13 +64,15 @@ public class VehicleStyleFragment extends ListFragment{
         setListAdapter(ad);
     }
 
+
+
     @Override //handle click of an item on list
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
         selected = (String) lv.getItemAtPosition(pos); //set selected item for later use
 
         //split ids for access to the one needed also turn into array list for removing bad data
-        List<String> t = new ArrayList<String>(Arrays.asList(ids.split("\\^")));
+        List<String> t = new ArrayList(Arrays.asList(ids.split("\\^")));
         t.removeAll(Arrays.asList("", " ", null));//remove bad data
         CarSearch.showFrag("dt");//unhide details frag
         new GetDetails().execute(t.get(pos));//call for async detail collection using style id
@@ -67,7 +80,7 @@ public class VehicleStyleFragment extends ListFragment{
 
     //sets list of styles when new model selected
     public void setList(String m){
-        List<String> l = new ArrayList<String>(Arrays.asList(m.split("\\^")));
+        List<String> l = new ArrayList(Arrays.asList(m.split("\\^")));
         l.removeAll(Arrays.asList(""," ", null));
         ad = new ArrayAdapter<String>(getActivity(), R.layout.style_list, R.id.style_row, l);
         setListAdapter(ad);
@@ -91,7 +104,9 @@ public class VehicleStyleFragment extends ListFragment{
         @Override
         protected String doInBackground(String... params) {
             try {//attempt to connect to the API through the total market value service to find the MSRP
-                URL url = new URL("http://api.edmunds.com/v1/api/tmv/tmvservice/calculatenewtmv?styleid="+params[0]+"&zip=84124&fmt=json&api_key=jskft3jqdm9wrhvj3fba2qwg");
+
+                URL url = new URL("http://api.edmunds.com/v1/api/tmv/tmvservice/calculatenewtmv?styleid=" + params[0] + "&zip=84124&fmt=json&api_key=jskft3jqdm9wrhvj3fba2qwg");
+
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();
                 c.setRequestMethod("GET");
                 c.setRequestProperty("Accept", "application/json");

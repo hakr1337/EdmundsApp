@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/car_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.edmundsapp.ehi.edmundsapp.CarSearch"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="81dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vehicle Year"
+        android:textColor="#FFF"
+        android:background="#505050"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:gravity="center"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:id = "@+id/vhyr"
+        android:background="#505050"
+        ></RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vehicle Make"
+        android:textColor="#FFF"
+        android:background="#505050"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:id = "@+id/vhmk"
+        android:background="#505050"
+        ></RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vehicle Model"
+        android:textColor="#FFF"
+        android:background="#505050"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:id = "@+id/vhmd"
+        android:background="#505050"
+        ></RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vehicle Style"
+        android:textColor="#FFF"
+        android:background="#505050"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:id = "@+id/vhst"
+        android:background="#505050"
+        ></RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vehicle Details"
+        android:textColor="#FFF"
+        android:background="#505050"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:id = "@+id/vhdt"
+        android:background="#505050"
+        >
+        </RelativeLayout>
+
+
+</LinearLayout>

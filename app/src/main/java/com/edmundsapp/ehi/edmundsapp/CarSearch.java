@@ -7,36 +7,45 @@ import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.widget.TextView;
 
+/***
+ * Main Activity Class
+ *  extends FragmentActivity for use of FragmentManager and FragmentTransaction
+ *  Creates and assigns fragments to their spot in the layout
+ *  Author: James Bradshaw
+ *  Date: 5/24/16
+ */
 public class CarSearch extends FragmentActivity {
-    String selected;
+
+    //static vars bc shouldnt change for proper usage
     public static FragmentManager fm;
     public static FragmentTransaction ft;
+
+    //create all fragments
     public static VehicleYearFragment yr = new VehicleYearFragment();
     public static VehicleMakeFragment mk = new VehicleMakeFragment();
     public static VehicleModelFragment md = new VehicleModelFragment();
     public static VehicleStyleFragment st = new VehicleStyleFragment();
     public static VehicleDetailsFragment dt = new VehicleDetailsFragment();
-    TextView name;
-    TextView price;
 
-    @Override
+    @Override//on create assign frags to their layouts
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.car_search);
-        name = (TextView) findViewById(R.id.mdlnm);
-        price = (TextView) findViewById(R.id.mdlpc);
 
         fm = getSupportFragmentManager();
         ft = fm.beginTransaction();
 
+        //hide all besides year for error avoidance
         ft.add(R.id.vhyr, yr);
         ft.add(R.id.vhmk, mk).hide(mk);
         ft.add(R.id.vhmd, md).hide(md);
         ft.add(R.id.vhst, st).hide(st);
         ft.add(R.id.vhdt, dt).hide(dt);
+        //commit adds
         ft.commit();
     }
 
+    //method to show an individual frag
     public static void showFrag(String frag){
         ft = fm.beginTransaction();
         switch(frag){
@@ -59,6 +68,7 @@ public class CarSearch extends FragmentActivity {
         }
     }
 
+    //method to hide an individual frag
     public static void hideFrag(String frag){
         ft = fm.beginTransaction();
         switch(frag){
@@ -80,6 +90,7 @@ public class CarSearch extends FragmentActivity {
                 break;
         }
     }
+
 
 }
 

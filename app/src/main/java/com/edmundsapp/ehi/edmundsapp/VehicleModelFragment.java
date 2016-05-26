@@ -58,6 +58,7 @@ public class VehicleModelFragment extends ListFragment{
     @Override//handle a selection from the list
     public void onListItemClick(ListView lv, View v, int pos, long id){
         v.setSelected(true);
+        CarSearch.hideFrag("dt");
         selected = (String) lv.getItemAtPosition(pos);
 
         //get styles by year, make, and model
