@@ -101,6 +101,8 @@ public class VehicleStyleFragment extends ListFragment{
      */
     private class GetDetails extends AsyncTask<String, Void, String> {
 
+        boolean n = true;
+
         @Override
         protected String doInBackground(String... params) {
             try {//attempt to connect to the API through the total market value service to find the MSRP
@@ -117,7 +119,15 @@ public class VehicleStyleFragment extends ListFragment{
                     if(CarSearch.yr.selected.equals("2017") && c.getResponseCode() == 400){
                         return "UNK";//vehicle info not released yet
                     }else {//if not current year bad request throw error
-                        throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() + " Request: " + url.toString());
+
+                        url = new URL("https://api.edmunds.com/v1/api/tmv/tmvservice/calculatetypicallyequippedusedtmv?styleid="+params[0]+"&zip=84124&fmt=json&api_key=jskft3jqdm9wrhvj3fba2qwg");
+                        c = (HttpURLConnection) url.openConnection();
+                        c.setRequestMethod("GET");
+                        c.setRequestProperty("Accept", "application/json");
+                        n = false;
+                        if(c.getResponseCode() != 200) {
+                            throw new RuntimeException("HTTP failed with error: " + c.getResponseCode() + " Request: " + url.toString());
+                        }
                     }
                 }
                 //read input stream
@@ -143,16 +153,30 @@ public class VehicleStyleFragment extends ListFragment{
                 CarSearch.dt.setName("Car details unavailable.");
                 CarSearch.dt.setPrice("MSRP:\n Unknown");
             }else {
-                try {
-                    JSONObject json = new JSONObject(ret);//create json object for reading
+                if(n) {
+                    try {
+                        JSONObject json = new JSONObject(ret);//create json object for reading
 
-                    String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("baseMSRP");//retrieve MSRP from object
+                        String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("baseMSRP");//retrieve MSRP from object
 
-                    CarSearch.dt.setName("Vehicle Selected:\n"+CarSearch.yr.selected +" "+CarSearch.mk.selected+" "+CarSearch.md.selected+" " + CarSearch.st.selected);//display selected vehicles name
-                    CarSearch.dt.setPrice("MSRP:\n $" + price);//display MSRP
+                        CarSearch.dt.setName("Vehicle Selected:\n" + CarSearch.yr.selected + " " + CarSearch.mk.selected + " " + CarSearch.md.selected + " " + CarSearch.st.selected);//display selected vehicles name
+                        CarSearch.dt.setPrice("MSRP:\n $" + price);//display MSRP
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    try {
+                        JSONObject json = new JSONObject(ret);//create json object for reading
+
+                        String price = json.getJSONObject("tmv").getJSONObject("nationalBasePrice").getString("usedTmvRetail");//retrieve MSRP from object
+
+                        CarSearch.dt.setName("Vehicle Selected:\n" + CarSearch.yr.selected + " " + CarSearch.mk.selected + " " + CarSearch.md.selected + " " + CarSearch.st.selected);//display selected vehicles name
+                        CarSearch.dt.setPrice("True Market Value:\n $" + price);//display MSRP
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
